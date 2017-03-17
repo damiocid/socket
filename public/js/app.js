@@ -1,9 +1,7 @@
 $(function() {
   var socket = io(),
-      name = getQueryVariable('name') || 'Anonymous', 
+      name = getQueryVariable('name') || 'Anonymous',
       room = getQueryVariable('room');
-
-  $('body').prepend('<p>' + '<strong>' + name + '</strong> joined room <strong>'+ room + '</strong></p>');
 
   socket.on('connect', function() {
     console.log('Connected to socket.io server!');
