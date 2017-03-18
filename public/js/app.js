@@ -41,4 +41,13 @@ $('.room-title').text(room);
     $message.val('');
   });
 
+  // $('.leave-button').on('click', function() {
+  //     // socket.on('disconnect', function() {
+  //       socket.emit('leaveRoom', {
+  //         name: name,
+  //         room: room
+  //       });
+  //     // });
+  // });
+
 });

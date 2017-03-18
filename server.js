@@ -35,6 +35,27 @@ io.on('connection', function(socket) {
     text: "Welcome to the chat app!",
     timestamp: now.valueOf()
   });
+
+  // socket.on('leaveRoom', function(req) {
+  //   socket.leave(req.room);
+  //   socket.broadcast.to(req.room).emit('message', {
+  //     text: req.name + 'has left the room!',
+  //     timestamp: now.valueOf()
+  //   });
+  // });
+
+  socket.on('disconnect', function() {
+    var userData = clientInfo[socket.id];
+    if (typeof userData !== 'undefined') {
+      socket.leave(userData.room);
+      io.to(userData.room).emit('message', {
+        name: 'System',
+        text: userData.name + 'has left the room!',
+        timestamp: now.valueOf()
+      });
+      delete clientInfo[socket.id];
+    }
+  });
 });
 
 http.listen(port, function() {
