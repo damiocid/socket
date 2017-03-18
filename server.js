@@ -9,6 +9,29 @@ app.use(express.static(__dirname + '/public'));
 
 var clientInfo = {};
 
+//sends current users to provided socket
+function sendCurrentUsers(socket) {
+  var info = clientInfo[socket.id];
+  var users = [];
+
+  if(typeof info === 'undefined'){
+    return;
+  }
+  Object.keys(clientInfo).forEach(function(socketId) {
+    var userInfo = clientInfo[socketId];
+
+    if(info.room === userInfo.room) {
+      users.push(userInfo.name);
+    }
+  });
+
+  socket.emit('message', {
+    name: 'System',
+    text: 'Current users: ' + users.join(', '),
+    timestamp: now.valueOf()
+  });
+}
+
 io.on('connection', function(socket) {
   console.log('User connected via socket.io!');
 
@@ -25,9 +48,13 @@ io.on('connection', function(socket) {
 
   socket.on('message', function(message) {
     var time = now.utc(message.timestamp).local().format('h:mm a');
-    console.log('Message received: ' + message.text + ' at ' + time);
 
-    io.to(clientInfo[socket.id].room).emit('message', message);
+    if (message.text === '@currentUsers') {
+      sendCurrentUsers(socket);
+    } else {
+      io.to(clientInfo[socket.id].room).emit('message', message);
+      console.log('Message received: ' + message.text + ' at ' + time);
+    }
   });
 
   socket.emit('message', {
@@ -36,21 +63,13 @@ io.on('connection', function(socket) {
     timestamp: now.valueOf()
   });
 
-  // socket.on('leaveRoom', function(req) {
-  //   socket.leave(req.room);
-  //   socket.broadcast.to(req.room).emit('message', {
-  //     text: req.name + 'has left the room!',
-  //     timestamp: now.valueOf()
-  //   });
-  // });
-
   socket.on('disconnect', function() {
     var userData = clientInfo[socket.id];
     if (typeof userData !== 'undefined') {
       socket.leave(userData.room);
-      io.to(userData.room).emit('message', {
+      socket.broadcast.to(userData.room).emit('message', {
         name: 'System',
-        text: userData.name + 'has left the room!',
+        text: userData.name + ' has left the room!',
         timestamp: now.valueOf()
       });
       delete clientInfo[socket.id];
