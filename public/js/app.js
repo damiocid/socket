@@ -18,11 +18,13 @@ $('.room-title').text(room);
     console.log('New message: ');
 
     console.log(message.text);
-    var $message = $('.messages');
+    var $messages = $('.messages');
+    var $message = $('<li class="list-group-item"></li>');
     var time = moment.utc(message.timestamp).local().format('h:mm a');
 
     $message.append('<p><strong>' + message.name + ' ' + time + '</strong></p>');
     $message.append('<p>' + message.text + '</p>');
+    $messages.append($message);
   });
 
   //Handles submitting of new message
@@ -40,14 +42,4 @@ $('.room-title').text(room);
 
     $message.val('');
   });
-
-  // $('.leave-button').on('click', function() {
-  //     // socket.on('disconnect', function() {
-  //       socket.emit('leaveRoom', {
-  //         name: name,
-  //         room: room
-  //       });
-  //     // });
-  // });
-
 });
