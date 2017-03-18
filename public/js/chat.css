@@ -1,0 +1,13 @@
+.room-title {
+  text-align: center;
+}
+.messages p {
+  margin: 6px 0;
+}
+.leave-room {
+  display: flex;
+  align-items: center;
+}
+.well {
+  margin-top: 35px;
+}
