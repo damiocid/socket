@@ -3,12 +3,20 @@ $(function() {
       name = getQueryVariable('name') || 'Anonymous',
       room = getQueryVariable('room');
 
+$('.room-title').text(room);
+
   socket.on('connect', function() {
     console.log('Connected to socket.io server!');
+    //client event to sever
+    socket.emit('joinRoom', {
+      name: name,
+      room: room
+    });
   });
 
   socket.on('message', function(message) {
     console.log('New message: ');
+
     console.log(message.text);
     var $message = $('.messages');
     var time = moment.utc(message.timestamp).local().format('h:mm a');
